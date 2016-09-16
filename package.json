@@ -1,6 +1,6 @@
 {
   "name": "feeder",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Simple JSON api which provides the netzwerk111.at lunch menu",
   "private": true,
   "scripts": {
@@ -9,11 +9,13 @@
   "author": "Martin Groller <madmg82@gmail.com>",
   "license": "MIT",
   "dependencies": {
+    "bluebird": "^3.4.6",
     "body-parser": "~1.15.1",
     "cookie-parser": "~1.4.3",
     "debug": "~2.2.0",
     "express": "~4.13.4",
+    "moment": "^2.15.0",
     "morgan": "~1.7.0",
-    "netzwerk111-menu": "^1.0.1"
+    "netzwerk111-menu": "1.1.0"
   }
 }
