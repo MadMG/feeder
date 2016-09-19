@@ -2,15 +2,7 @@ var express = require('express');
 var router = express.Router();
 var dataSource = require('../data/menu');
 var moment = require('moment');
-
-/* GET home page. */
-router.use(function (req, res, next) {
-  req.apiOptions = {
-    prettyPrint: req.query.pretty || false
-  };
-
-  next();
-});
+var writeResponse = require('../helper/response-writer');
 
 router.get('/today', function (req, res) {
   resolveDate(req, res, moment().format('YYYY-MM-DD'));
@@ -38,7 +30,7 @@ router.get('/:date', function (req, res) {
   if (req.apiParameter && req.apiParameter.date) {
     resolveDate(req, res, req.apiParameter.date);
   } else {
-    writeResponse(res, {message: 'invalid parameter'}, prettyPrint, 400);
+    writeResponse(res, {message: 'invalid parameter'}, req.apiOptions.prettyPrint, 400);
   }
 });
 
@@ -57,18 +49,5 @@ router.get('/', function (req, res) {
       });
 });
 
-
-function writeResponse (res, responseData, prettyPrint, httpStatus) {
-  if (httpStatus) {
-    res.status(httpStatus);
-  }
-
-  if (prettyPrint) {
-    res.setHeader('Content-Type', 'application/json');
-    res.send(JSON.stringify(responseData, null, 2));
-  } else {
-    res.json(responseData);
-  }
-}
 
 module.exports = router;
