@@ -16,7 +16,7 @@ module.exports = {
           resolve(data);
         }
       });
-    })
+    });
   },
 
   _merge: function (existing, newItems) {
@@ -43,11 +43,13 @@ module.exports = {
             if (Array.isArray(data)) {
               self._cache = self._merge(self._cache, data);
             }
+
             self._lastCheck = currentDay;
             return data;
           });
     }
-    return Pact.resolve(this._cache)
+
+    return Pact.resolve(this._cache);
   },
 
   get: function (date) {

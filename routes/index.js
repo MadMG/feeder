@@ -23,7 +23,7 @@ function resolveDate (req, res, date) {
       })
       .catch(function (err) {
         writeResponse(res, err, prettyPrint, err.status || 404);
-      })
+      });
 }
 
 router.get('/:date', function (req, res) {
@@ -48,6 +48,5 @@ router.get('/', function (req, res) {
         writeResponse(res, responseData, prettyPrint, err.status || 501);
       });
 });
-
 
 module.exports = router;
