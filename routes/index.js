@@ -8,6 +8,55 @@ router.get('/today', function (req, res) {
   resolveDate(req, res, moment().format('YYYY-MM-DD'));
 });
 
+router.post('/today', function (req, res) {
+  var body = req.body;
+  var raw = body.raw || false;
+  var data = body.data;
+  var today = moment().format('YYYY-MM-DD');
+  var parsedData;
+
+  if (data) {
+    if (raw) {
+      // parse the thing
+      parsedData = {};
+      data.split('<br>').forEach(function (line) {
+        if (line.toLowerCase().indexOf('suppe') !== -1) {
+          parsedData.soup = line.trim();
+        } else {
+          var idx = line.indexOf('€');
+
+          if (idx !== -1) {
+            parsedData.special = line.substring(0, idx).trim();
+          }
+        }
+      });
+
+    } else {
+      parsedData = data || {};
+    }
+
+    dataSource.get(today)
+        .then(function (data) {
+          if (parsedData.soup) {
+            data.soup = parsedData.soup;
+          }
+
+          if (parsedData.special) {
+            data.special = parsedData.special;
+          }
+
+          writeResponse(res, data, true);
+        })
+        .catch(function (err) {
+          writeResponse(res, err, true, err.status || 404);
+        });
+
+  } else {
+    writeResponse(res, {status: 401, message: 'no data'}, 401);
+  }
+
+});
+
 router.param('date', function (req, res, next, date) {
   req.apiParameter = req.apiParameter || {};
   req.apiParameter.date = date;
