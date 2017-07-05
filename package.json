@@ -1,6 +1,6 @@
 {
   "name": "feeder",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "description": "Simple JSON api which provides the netzwerk111.at lunch menu",
   "private": true,
   "scripts": {
@@ -17,7 +17,7 @@
     "express": "~4.13.4",
     "moment": "^2.15.0",
     "morgan": "~1.7.0",
-    "netzwerk111-menu": "1.1.0"
+    "netzwerk111-menu": "1.1.1"
   },
   "devDependencies": {
     "jscs": "^3.0.7",
