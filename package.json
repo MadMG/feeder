@@ -7,6 +7,9 @@
     "start": "node ./bin/www",
     "test": "node_modules/.bin/mocha"
   },
+  "engines": {
+    "node": "6.11.1"
+  },
   "author": "Martin Groller <madmg82@gmail.com>",
   "license": "MIT",
   "dependencies": {
