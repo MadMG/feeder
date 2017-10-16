@@ -52,7 +52,6 @@ module.exports = {
 
     return store.hasData(date)
         .then(() => {
-          console.debug('Got data from store');
           return store.readData(date);
         }, () => self._getAndStoreCurrentWeek());
   },
@@ -62,7 +61,6 @@ module.exports = {
 
     return store.hasData(date)
         .then(() => {
-          console.debug('Got data from store');
           return store.readData(date);
         }, () => self._getAndStoreCurrentWeek())
         .then((data) => {
@@ -77,7 +75,6 @@ module.exports = {
           return filtered[0];
         })
         .catch((err) => {
-          console.log(err);
           return Pact.reject({status: 404, message: 'no data'});
         });
   },
