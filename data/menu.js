@@ -1,13 +1,12 @@
-var menu = require('netzwerk111-menu');
-var Pact = require('bluebird');
-var moment = require('moment');
+const menu = require('netzwerk111-menu');
+const Pact = require('bluebird');
+const moment = require('moment');
+const store = require('./file-store');
 
 module.exports = {
-  _cache: [],
+  _pendingRequest: undefined,
 
-  _lastCheck: null,
-
-  _retrieveData: function () {
+  _retrieveData () {
     return new Pact(function (resolve, reject) {
       menu.retrieve(function (err, data) {
         if (err) {
@@ -19,9 +18,9 @@ module.exports = {
     });
   },
 
-  _merge: function (existing, newItems) {
-    var days = [];
-    var merged = newItems.map(function (item) {
+  _merge (existing, newItems) {
+    const days = [];
+    const merged = newItems.map(function (item) {
       days.push(item.date);
       return item;
     });
@@ -33,29 +32,41 @@ module.exports = {
     return merged;
   },
 
-  getAll: function () {
-    var currentDay = moment();
-    var self = this;
+  getCurrentWeek () {
+    const currentDay = moment();
 
-    if (this._cache.length === 0 || !this._lastCheck || this._lastCheck.isBefore(currentDay, 'day')) {
-      return this._retrieveData()
-          .then(function (data) {
-            if (Array.isArray(data)) {
-              self._cache = self._merge(self._cache, data);
-            }
+    return this._getWeek(currentDay)
+        .then((data) => {
+          let week;
 
-            self._lastCheck = currentDay;
-            return data;
-          });
-    }
+          if (Array.isArray(data)) {
+            week = data.filter((day) => parseInt(day.week, 10) === currentDay.week());
+          }
 
-    return Pact.resolve(this._cache);
+          return week && week.length > 0 ? week : Pact.reject({status: 404, message: 'no data'});
+        });
   },
 
-  get: function (date) {
-    return this.getAll()
-        .then(function (data) {
-          var filtered = data.filter(function (menu) {
+  _getWeek (date) {
+    const self = this;
+
+    return store.hasData(date)
+        .then(() => {
+          console.debug('Got data from store');
+          return store.readData(date);
+        }, () => self._getAndStoreCurrentWeek());
+  },
+
+  get (date) {
+    const self = this;
+
+    return store.hasData(date)
+        .then(() => {
+          console.debug('Got data from store');
+          return store.readData(date);
+        }, () => self._getAndStoreCurrentWeek())
+        .then((data) => {
+          const filtered = data.filter(function (menu) {
             return menu.date === date;
           });
 
@@ -64,6 +75,27 @@ module.exports = {
           }
 
           return filtered[0];
+        })
+        .catch((err) => {
+          console.log(err);
+          return Pact.reject({status: 404, message: 'no data'});
         });
+  },
+
+  _getAndStoreCurrentWeek () {
+    if (!this._pendingRequest) {
+      const self = this;
+
+      this._pendingRequest = this._retrieveData()
+          .then(function (data) {
+            return store.saveData(data);
+          })
+          .then(function (data) {
+            self._pendingRequest = undefined;
+            return data;
+          });
+    }
+
+    return this._pendingRequest;
   }
 };

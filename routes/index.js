@@ -1,19 +1,19 @@
-var express = require('express');
-var router = express.Router();
-var dataSource = require('../data/menu');
-var moment = require('moment');
-var writeResponse = require('../helper/response-writer');
+const express = require('express');
+const router = express.Router();
+const dataSource = require('../data/menu');
+const moment = require('moment');
+const writeResponse = require('../helper/response-writer');
 
 router.get('/today', function (req, res) {
   resolveDate(req, res, moment().format('YYYY-MM-DD'));
 });
 
 router.post('/today', function (req, res) {
-  var body = req.body;
-  var raw = body.raw || false;
-  var data = body.data;
-  var today = moment().format('YYYY-MM-DD');
-  var parsedData;
+  const body = req.body;
+  const raw = body.raw || false;
+  const data = body.data;
+  const today = moment().format('YYYY-MM-DD');
+  let parsedData;
 
   if (data) {
     if (raw) {
@@ -23,7 +23,7 @@ router.post('/today', function (req, res) {
         if (line.toLowerCase().indexOf('suppe') !== -1) {
           parsedData.soup = line.trim();
         } else {
-          var idx = line.indexOf('€');
+          const idx = line.indexOf('€');
 
           if (idx !== -1) {
             parsedData.special = line.substring(0, idx).trim();
@@ -64,7 +64,7 @@ router.param('date', function (req, res, next, date) {
 });
 
 function resolveDate (req, res, date) {
-  var prettyPrint = req.apiOptions.prettyPrint;
+  const prettyPrint = req.apiOptions.prettyPrint;
 
   dataSource.get(date)
       .then(function (data) {
@@ -84,13 +84,13 @@ router.get('/:date', function (req, res) {
 });
 
 router.get('/', function (req, res) {
-  var prettyPrint = req.apiOptions.prettyPrint;
+  const prettyPrint = req.apiOptions.prettyPrint;
 
-  dataSource.getAll()
+  dataSource.getCurrentWeek()
       .then(function (data) {
         writeResponse(res, data, prettyPrint);
       }, function (err) {
-        var responseData = {
+        const responseData = {
           message: err.message || 'error'
         };
 

@@ -13,7 +13,7 @@
   "disallowSpacesInsideArrayBrackets": true,
   "disallowSpacesInsideParentheses": true,
   "disallowQuotedKeysInObjects": "allButReserved",
-  "disallowSpaceAfterObjectKeys": true,
+//  "disallowSpaceAfterObjectKeys": true,
   "requireSpaceBeforeObjectValues": true,
   "requirePaddingNewLinesBeforeExport": true,
   "disallowMultipleSpaces": true,
