@@ -47,6 +47,21 @@ module.exports = {
         });
   },
 
+  getWeek (week) {
+    const startOfWeek = moment().day('Monday').week(week);
+
+    return this._getWeek(startOfWeek)
+        .then((data) => {
+          let week;
+
+          if (Array.isArray(data)) {
+            week = data.filter((day) => parseInt(day.week, 10) === startOfWeek.week());
+          }
+
+          return week && week.length > 0 ? week : Pact.reject({status: 404, message: 'no data'});
+        });
+  },
+
   _getWeek (date) {
     const self = this;
 

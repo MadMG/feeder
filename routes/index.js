@@ -63,6 +63,32 @@ router.param('date', function (req, res, next, date) {
   next();
 });
 
+router.param('week', function (req, res, next, week) {
+  req.apiParameter = req.apiParameter || {};
+  req.apiParameter.week = parseInt(week, 10);
+  next();
+});
+
+router.get('/week/:week', function (req, res) {
+  if (req.apiParameter && req.apiParameter.week) {
+    resolveWeek(req, res, req.apiParameter.week);
+  } else {
+    writeResponse(res, {message: 'invalid parameter'}, req.apiOptions.prettyPrint, 400);
+  }
+});
+
+function resolveWeek (req, res, week) {
+  const prettyPrint = req.apiOptions.prettyPrint;
+
+  dataSource.getWeek(week)
+    .then(function (data) {
+      writeResponse(res, data, prettyPrint);
+    })
+    .catch(function (err) {
+      writeResponse(res, err, prettyPrint, err.status || 404);
+    });
+}
+
 function resolveDate (req, res, date) {
   const prettyPrint = req.apiOptions.prettyPrint;
 
