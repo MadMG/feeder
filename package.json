@@ -1,6 +1,6 @@
 {
   "name": "feeder",
-  "version": "1.3.0",
+  "version": "1.3.1",
   "description": "Simple JSON api which provides the netzwerk111.at lunch menu",
   "private": true,
   "scripts": {
